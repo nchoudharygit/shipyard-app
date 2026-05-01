@@ -1,0 +1,6 @@
+# .dockerignore file banao
+node_modules
+.git
+*.md
+.env
+terraform/
