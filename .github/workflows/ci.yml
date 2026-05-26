@@ -30,7 +30,7 @@ jobs:
             - name: Checkout code
               uses: actions/checkout@v2
             - name: Set up Terraform
-              uses: hashicorp/setup-terraform@v1
+              uses: hashicorp/setup-terraform@v3
               with:
                 terraform_version: 1.0.0
             - name: setup aws credentials
@@ -45,10 +45,12 @@ jobs:
                 terraform fmt -check
             - name: Terraform init and validate
               env:
-                TF_VAR_public_key: ${{ secrets.TF_VAR_PUBLIC_KEY }}
+               TF_VAR_public_key: ${{ secrets.TF_VAR_PUBLIC_KEY }}
+               TF_VAR_key_pair_name: "shipyard-key"
+               TF_VAR_my_ip: ${{ secrets.MY_IP }}
               run: |
                 cd terraform
-                terraform init
+                terraform init -input=false
                 terraform validate
-                terraform plan 
+                terraform plan -input=false
 

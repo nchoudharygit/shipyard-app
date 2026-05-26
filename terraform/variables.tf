@@ -6,6 +6,7 @@ variable "region" {
 variable "key_pair_name" {
   description = "EC2 key pair name"
   type        = string
+  default     = "shipyard-key"  # default value for convenience, can be overridden in terraform.tfvars
 }
 variable "my_ip" {
   description = "Your local machine IP for SSH access"
