@@ -11,3 +11,8 @@ variable "my_ip" {
   description = "Your local machine IP for SSH access"
   type        = string
 }
+
+variable "public_key" {
+  description = "SSH public key content"
+  type        = string
+}
