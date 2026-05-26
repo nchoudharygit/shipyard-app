@@ -84,3 +84,13 @@ CloudWatch alarm configured:
 - Real debugging in cloud environments
 - Infrastructure as Code benefits — reproducible, version-controlled
 - CI/CD automation reduces manual errors
+
+### 🛠️ Prerequisites & CI/CD Setup
+
+If you fork this repository and want to run the deployment pipeline, you need to configure a few GitHub Secrets for your workflow to succeed.
+
+1. Go to your forked repository's **Settings > Secrets and variables > Actions**.
+2. Click **New repository secret** and add the following:
+   * `TF_VAR_PUBLIC_KEY`: The contents of your public SSH key (`~/.ssh/id_rsa.pub`).
+   * `TF_VAR_MY_IP`: Your current local public IP address with a `/32` CIDR suffix (e.g., `192.0.2.1/32`). 
+     * *Note: You can find your current public IP by searching "What is my IP" on Google or running `curl ifconfig.me` in your terminal. Because home IPs are usually dynamic, you may need to update this secret if your ISP changes your IP.*
