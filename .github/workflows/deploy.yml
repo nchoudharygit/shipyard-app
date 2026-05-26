@@ -23,12 +23,12 @@ jobs:
                 ECR_REPOSITORY: ${{ secrets.ECR_REGISTRY }}
                 IMAGE_TAG: ${{ github.sha }}
               run: |
-                docker build -t $ECR_REPOSITORY/shipyard-app:$IMAGE_TAG .
-                docker push $ECR_REPOSITORY/shipyard-app:$IMAGE_TAG
+                docker build -t $ECR_REPOSITORY:$IMAGE_TAG .
+                docker push $ECR_REPOSITORY:$IMAGE_TAG
                 # update latest tag
-                docker tag $ECR_REPOSITORY/shipyard-app:$IMAGE_TAG $ECR_REPOSITORY/shipyard-app:latest
-                docker push $ECR_REPOSITORY/shipyard-app:latest
-                echo 'Pushed: '$ECR_REPOSITORY/shipyard-app:$IMAGE_TAG
+                docker tag $ECR_REPOSITORY:$IMAGE_TAG $ECR_REPOSITORY:latest
+                docker push $ECR_REPOSITORY:latest
+                echo 'Pushed: '$ECR_REPOSITORY:$IMAGE_TAG
     deploy:
         needs: build
         runs-on: ubuntu-latest
