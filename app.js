@@ -5,7 +5,7 @@ const ENV  = process.env.APP_ENV || 'development';
 
 const server = createServer((req, res) => {
 
-  // Health check endpoint — CloudWatch aur K8s yahi check karta hai
+  // Health check endpoint for monitoring
   if (req.url === '/health') {
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ status: 'ok', env: ENV }));
