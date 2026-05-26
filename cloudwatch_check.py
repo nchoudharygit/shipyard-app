@@ -12,5 +12,4 @@ else:
     for alarm in response['MetricAlarms']:
         print(f'ALARM: {alarm["AlarmName"]} — {alarm["StateReason"][:60]}')
 
-# Run karo:
 # python3 cloudwatch_check.py

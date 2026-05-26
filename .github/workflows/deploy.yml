@@ -1,11 +1,10 @@
-name: Build and push Docker image
+name: Deploy to ec2
 on:
     push:
-        branches: [ main ]          # Sirf main pe push hone pe
-    pull_request:
-        branches: [ main ]          # PR pe bhi — test ke liye
+        branches: [ main ]          
+            
 jobs:
-    build-and-push:
+    build:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout code
@@ -26,7 +25,30 @@ jobs:
               run: |
                 docker build -t $ECR_REPOSITORY/shipyard-app:$IMAGE_TAG .
                 docker push $ECR_REPOSITORY/shipyard-app:$IMAGE_TAG
-                # 'latest' tag bhi update karo
+                # update latest tag
                 docker tag $ECR_REPOSITORY/shipyard-app:$IMAGE_TAG $ECR_REPOSITORY/shipyard-app:latest
                 docker push $ECR_REPOSITORY/shipyard-app:latest
                 echo 'Pushed: '$ECR_REPOSITORY/shipyard-app:$IMAGE_TAG
+    deploy:
+        needs: build
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v2
+            - name: setup aws credentials
+              uses: aws-actions/configure-aws-credentials@v1
+              with:
+                aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                aws-region: ${{ secrets.AWS_REGION }}
+            - name: Deploy to EC2 using SSH
+              env:
+                 EC2_PUBLIC_IP: ${{ secrets.EC2_PUBLIC_IP }}
+                 SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+                 ECR_REPOSITORY: ${{ secrets.ECR_REGISTRY }}
+                 IMAGE_TAG: ${{ github.sha }}
+              run: |
+                echo "$SSH_KEY" > ssh_key.pem
+                chmod 600 ssh_key.pem
+                ssh -o StrictHostKeyChecking=no -i ssh_key.pem ec2-user@$EC2_PUBLIC_IP "docker pull $ECR_REPOSITORY/shipyard-app:$IMAGE_TAG && docker stop shipyard-app || true && docker rm shipyard-app || true && docker run -d --name shipyard-app -p 1000:1000 $ECR_REPOSITORY/shipyard-app:$IMAGE_TAG"
+                rm -f ssh_key.pem 

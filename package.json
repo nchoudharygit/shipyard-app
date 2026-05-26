@@ -1,1 +1,10 @@
-{ "name": "shipyard-app", "version": "1.0.0", "type": "module", "scripts": { "start": "node app.js" } }
+{
+  "name": "shipyard-app",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node app.js",
+    "test": "echo no tests yet && exit 0"
+  }
+  
+}

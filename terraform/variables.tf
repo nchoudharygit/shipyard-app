@@ -1,10 +1,19 @@
 variable "region" {
   description = "The AWS region to deploy resources in."
   type        = string
-  default     = "ap-south-1"
-  
 }
 
 variable "key_pair_name" {
-  description = "The name of the AWS EC2 Key Pair for SSH access"
+  description = "EC2 key pair name"
+  type        = string
+  default     = "shipyard-key" # default value for convenience, can be overridden in terraform.tfvars
+}
+variable "my_ip" {
+  description = "Your local machine IP for SSH access"
+  type        = string
+}
+
+variable "public_key" {
+  description = "SSH public key content"
+  type        = string
 }

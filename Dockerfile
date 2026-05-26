@@ -6,3 +6,4 @@ COPY . .
 EXPOSE 1000
 ENV APP_ENV="production"
 CMD ["node", "app.js"]
+
