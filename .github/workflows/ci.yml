@@ -48,6 +48,7 @@ jobs:
                TF_VAR_public_key: ${{ secrets.TF_VAR_PUBLIC_KEY }}
                TF_VAR_key_pair_name: "shipyard-key"
                TF_VAR_my_ip: ${{ secrets.MY_IP }}
+               TF_VAR_region: ${{ secrets.AWS_REGION }}
               run: |
                 cd terraform
                 terraform init -input=false
