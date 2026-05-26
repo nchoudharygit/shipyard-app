@@ -50,5 +50,5 @@ jobs:
               run: |
                 echo "$SSH_KEY" > ssh_key.pem
                 chmod 600 ssh_key.pem
-                ssh -o StrictHostKeyChecking=no -i ssh_key.pem ec2-user@$EC2_PUBLIC_IP "docker pull $ECR_REPOSITORY/shipyard-app:$IMAGE_TAG && docker stop shipyard-app || true && docker rm shipyard-app || true && docker run -d --name shipyard-app -p 1000:1000 $ECR_REPOSITORY/shipyard-app:$IMAGE_TAG"
+                ssh -o StrictHostKeyChecking=no -i ssh_key.pem ec2-user@$EC2_PUBLIC_IP "docker pull $ECR_REPOSITORY:$IMAGE_TAG && docker stop shipyard-app || true && docker rm shipyard-app || true && docker run -d --name shipyard-app -p 1000:1000 $ECR_REPOSITORY:$IMAGE_TAG"
                 rm -f ssh_key.pem 
