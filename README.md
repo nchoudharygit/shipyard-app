@@ -18,6 +18,9 @@ pipeline — from local development to cloud infrastructure.
 ## 🔄 Pipeline Flow
 Code Push → GitHub Actions → Docker Build → ECR Push → EC2 Deploy
 
+**GitHub Actions CI/CD**
+
+- 
 ## 📁 Project Structure
 shipyard-app/
 ├── app.js                    # Node.js API with /health endpoint
@@ -26,7 +29,8 @@ shipyard-app/
 ├── cloudwatch_check.py       # boto3 monitoring script
 ├── .github/
 │   └── workflows/
-│       └── deploy.yml        # CI/CD pipeline
+│       └── deploy.yml        # CD pipeline
+         └── ci.yml           # CI pipeline
 └── terraform/
 ├── main.tf               # VPC, EC2, Security Groups
 ├── variables.tf
