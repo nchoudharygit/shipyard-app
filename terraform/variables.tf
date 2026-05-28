@@ -17,3 +17,8 @@ variable "public_key" {
   description = "SSH public key content"
   type        = string
 }
+
+variable "notification_email" {
+  description = "Email for CloudWatch alerts"
+  type        = string
+}

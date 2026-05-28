@@ -44,7 +44,11 @@ resource "aws_iam_role_policy_attachment" "ecr_policy" {
   role       = aws_iam_role.ec2_role.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
 }
-
+# Attach SSM policy
+resource "aws_iam_role_policy_attachment" "ssm_policy" {
+  role       = aws_iam_role.ec2_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
 # Instance profile
 resource "aws_iam_instance_profile" "ec2_profile" {
   name = "shipyard-ec2-profile"
@@ -132,7 +136,7 @@ resource "aws_instance" "app_server" {
   key_name               = aws_key_pair.pem_key.key_name
   iam_instance_profile   = aws_iam_instance_profile.ec2_profile.name
   tags                   = { Name = "shipyard-app-server" }
-  user_data              = <<-EOF
+  user_data = <<-EOF
   #!/bin/bash
   sudo apt update -y
   sudo apt install -y docker.io unzip
@@ -142,5 +146,43 @@ resource "aws_instance" "app_server" {
   sudo systemctl start docker
   sudo systemctl enable docker
   sudo usermod -aG docker ubuntu
+  # SSM Agent
+  sudo snap install amazon-ssm-agent --classic
+  sudo systemctl start snap.amazon-ssm-agent.amazon-ssm-agent.service
+  sudo systemctl enable snap.amazon-ssm-agent.amazon-ssm-agent.service
 EOF
+}
+
+resource "aws_sns_topic" "app_notifications" {
+  name = "shipyard-app-notifications"
+  tags = {
+    Name = "shipyard-sns-topic"
+  }
+}
+
+resource "aws_sns_topic_subscription" "email_subscription" {
+  topic_arn = aws_sns_topic.app_notifications.arn
+  protocol  = "email"
+  endpoint  = var.notification_email
+}
+
+resource "aws_cloudwatch_metric_alarm" "cpu_alarm" {
+  alarm_name          = "shipyard-cpu-alarm"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = 1
+  metric_name         = "CPUUtilization"
+  namespace           = "AWS/EC2"
+  period              = 300
+  statistic           = "Average"
+  threshold           = 80
+  alarm_description   = "Alarm when CPU exceeds 80%"
+  dimensions = {
+    InstanceId = aws_instance.app_server.id
+  }
+  alarm_actions = [aws_sns_topic.app_notifications.arn]
+}
+
+resource "aws_cloudwatch_log_group" "shipyard_log_group" {
+  name = "/shipyard-app"
+  retention_in_days = 7
 }
